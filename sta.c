@@ -118,12 +118,6 @@ void clear_line() {
 	append("\x1b[K");
 }
 
-void scroll(int start, int end) {
-	char buf[32];
-    snprintf(buf, sizeof(buf),"\x1b[%d;%dr", start, end);
-	append(buf);
-}
-
 /* TODO support multiple terminals */
 /*
 typedef struct {
