@@ -9,29 +9,29 @@
  * http://www.termsys.demon.co.uk/vtansi.htm 
  * 
  */
- 
-//#define _BSD_SOURCE
-//#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <signal.h>
 //#include <termios.h>
 //#include <errno.h>
 //#include <ctype.h>
-//#include <sys/types.h>
-//#include <sys/ioctl.h>
 //#include <sys/time.h>
 //#include <stdarg.h>
 //#include <fcntl.h>
+
+/* buffer */
 
 typedef struct {
     char *data;
     int len;
 } Buffer;
 
-static Buffer buffer;
+static Buffer buffer = { NULL, 0 };
 
 void append(const char *str) {
 	size_t len = strlen(str);
@@ -44,13 +44,18 @@ void append(const char *str) {
 
 /* vt100 escape codes */
 
-/* Requests a Report Device Code response from the device. */
-void device_query() {
-	append("\x1b[c");
+void cursor_position() {
+	append("\x1b[6n");
+	// response: EscLine;ColumnR 
 }
 
-void cursor_query() {
-	append("\x1b[6n");
+/* Sets the cursor position where subsequent text will begin. 
+ * If no row/column parameters are provided (ie. <ESC>[H), the cursor will move
+ * to the home position, at the upper left of the screen. */
+void cursor_move(int row, int col) {
+	char buf[32];
+    snprintf(buf, sizeof(buf),"\x1b[%d;%dH", row, col);
+	append(buf);
 }
 
 void cursor_hide() {
@@ -67,15 +72,7 @@ void clear() {
 }
 
 void clear_line() {
-	append("\x1b[0K");
-}
-/* Sets the cursor position where subsequent text will begin. 
- * If no row/column parameters are provided (ie. <ESC>[H), the cursor will move
- * to the home position, at the upper left of the screen. */
-void move(int row, int col) {
-	char buf[32];
-    snprintf(buf, sizeof(buf),"\x1b[%d;%dH", row, col);
-	append(buf);
+	append("\x1b[K");
 }
 
 /* Enable scrolling from row {start} to row {end}. */
@@ -87,7 +84,65 @@ void scroll(int start, int end) {
 
 void apply() {
 	write(STDOUT_FILENO, buffer.data, buffer.len);
-    free(buffer.data);
+    memset(buffer.data, 0, buffer.len);
+    buffer.data = NULL;
+    buffer.len = 0;
+}
+
+/* window handling */
+
+/* Try to get the number of columns in the current terminal.
+ * Returns 0 on success, -1 on error. */
+int getWindowSize(int ifd, int ofd, int *rows, int *cols) {
+    struct winsize ws;
+    if (ioctl(1, TIOCGWINSZ, &ws) == 0) {
+        *cols = ws.ws_col;
+        *rows = ws.ws_row;
+        return 0;
+    }
+    return -1;
+}
+
+
+void lines(int num, int row) {
+	for(int i=0; i<num; i++) {
+		cursor_move(1+row+i, 1);
+		char buf[32];
+    	snprintf(buf, sizeof(buf),"line %d", i);
+		append(buf);
+	}
+}
+
+void refresh() {
+	cursor_hide();
+	clear();
+	lines(10, 0);
+	lines(5, 10);
+	apply();
+	cursor_show();
+}
+
+void handle_winch(int sig){
+
+	refresh();
+	printf("resize");
+
+ 	signal(SIGWINCH, SIG_IGN);	
+ 	
+ 	// Reinitialize the window to update data structures.
+ 	//endwin();
+ 	//initscr();
+ 	//refresh();
+ 	//clear();	
+ 	//char tmp[128];
+ 	//sprintf(tmp, "%dx%d", COLS, LINES);	
+ 	//// Approximate the center
+ 	//int x = COLS / 2 - strlen(tmp) / 2;
+ 	//int y = LINES / 2 - 1;	
+ 	//mvaddstr(y, x, tmp);
+ 	//refresh();	
+ 	
+ 	signal(SIGWINCH, handle_winch);
 }
 
 int main(int argc, char *argv[]) {
@@ -96,17 +151,11 @@ int main(int argc, char *argv[]) {
 	// 1. append commands to buffer
 	// 2. apply
 	// 3. wait for input
+	refresh();
 	
-	cursor_hide();
-	clear();
-	char buf[32];
-	for(int i=0; i<3; i++) {
-		move(1+i, 1);
-    	snprintf(buf, sizeof(buf),"line %d", i);
-		append(buf);
-	}
-	cursor_show();
-	apply();
+	signal(SIGWINCH, handle_winch);
+	
+	while(getchar() != 27) {}
 	
 	return 0;
 }
