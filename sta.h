@@ -1,5 +1,5 @@
 /* 
- * vt100 - simple vt100 terminal abstraction 
+ * sta - simple vt100 terminal abstraction 
  *
  * - buffer common terminal escape codes for rendering
  * - window size and resize event 

@@ -1,4 +1,4 @@
-#include "vt100.c"
+#include "sta.c"
 
 void lines(int num, int row, int col) {
 	for(int i=0; i<num; i++) {

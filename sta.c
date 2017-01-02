@@ -6,7 +6,7 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 
-#include "vt100.h"
+#include "sta.h"
 
 typedef struct {
     char *data;
