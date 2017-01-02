@@ -24,15 +24,15 @@ void append(const char *str);
 void apply();
 
 /* try to get the number of columns in the current terminal. */
-int window_size(int *rows, int *cols);
+int get_window_size(int *rows, int *cols);
 
 /* VT-100 */
 
 /* sets the cursor position where subsequent text will begin. */
-void cursor_move(int row, int col);
+void move(int row, int col);
 
 /* show / hide cursor */
-void cursor_show(int show);
+void cursor(int visible);
 
 /* erases the screen with the background colour and moves the cursor home. */
 void clear();

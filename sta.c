@@ -19,7 +19,7 @@ static Buffer buffer = { NULL, 0 };
 static int rawmode = 0;
 static struct termios orig_termios; /* In order to restore at exit.*/
 
-void disableRawMode(int fd) {
+void disable_raw_mode(int fd) {
     /* Don't even check the return value as it's too late. */
     if (rawmode) {
         tcsetattr(fd,TCSAFLUSH,&orig_termios);
@@ -28,17 +28,17 @@ void disableRawMode(int fd) {
 }
 
 /* Called at exit to avoid remaining in raw mode. */
-void editorAtExit(void) {
-    disableRawMode(STDIN_FILENO);
+void editor_at_exit(void) {
+    disable_raw_mode(STDIN_FILENO);
 }
 
 /* Raw mode: 1960 magic shit. */
-int enableRawMode(int fd) {
+int enable_raw_mode(int fd) {
     struct termios raw;
 
     if (rawmode) return 0; /* Already enabled. */
     if (!isatty(STDIN_FILENO)) goto fatal;
-    atexit(editorAtExit);
+    atexit(editor_at_exit);
     if (tcgetattr(fd,&orig_termios) == -1) goto fatal;
 
     raw = orig_termios;  /* modify the original mode */
@@ -68,10 +68,10 @@ fatal:
 
 void init(resize_handler handler) {
 	signal(SIGWINCH, handler);
-	enableRawMode(STDIN_FILENO);
+	enable_raw_mode(STDIN_FILENO);
 }
 
-int window_size(int *rows, int *cols) {
+int get_window_size(int *rows, int *cols) {
     struct winsize ws;
     if (ioctl(1, TIOCGWINSZ, &ws) == 0) {
         *cols = ws.ws_col;
@@ -97,14 +97,14 @@ void apply() {
     buffer.len = 0;
 }
 
-void cursor_move(int row, int col) {
+void move(int row, int col) {
 	char buf[32];
     snprintf(buf, sizeof(buf),"\x1b[%d;%dH", row, col);
 	append(buf);
 }
 
-void cursor_show(int show) {
-	if (show) 
+void cursor(int visible) {
+	if (visible) 
 		append("\x1b[?25h");	
 	else 
 		append("\x1b[?25l");	
