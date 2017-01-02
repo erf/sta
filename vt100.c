@@ -6,7 +6,9 @@
  *
  * LINKS
  * https://github.com/antirez/kilo
+ * http://vt100.net/docs/vt100-ug/contents.html
  * http://www.termsys.demon.co.uk/vtansi.htm 
+ * http://ascii-table.com/ansi-escape-sequences-vt-100.php
  * 
  */
 
@@ -66,11 +68,12 @@ void cursor_show() {
 	append("\x1b[?25h");	
 }
 
-/* Erases the screen with the background colour and moves the cursor home. */
+/* erases the screen with the background colour and moves the cursor home. */
 void clear() {
 	append("\x1b[2J");
 }
 
+/* clear line right of cursor */
 void clear_line() {
 	append("\x1b[K");
 }
@@ -82,6 +85,7 @@ void scroll(int start, int end) {
 	append(buf);
 }
 
+/* write command buffer to STDOUT and reset buffer */
 void apply() {
 	write(STDOUT_FILENO, buffer.data, buffer.len);
     memset(buffer.data, 0, buffer.len);
@@ -89,11 +93,8 @@ void apply() {
     buffer.len = 0;
 }
 
-/* window handling */
-
-/* Try to get the number of columns in the current terminal.
- * Returns 0 on success, -1 on error. */
-int getWindowSize(int ifd, int ofd, int *rows, int *cols) {
+/* try to get the number of columns in the current terminal. */
+int window_size(int *rows, int *cols) {
     struct winsize ws;
     if (ioctl(1, TIOCGWINSZ, &ws) == 0) {
         *cols = ws.ws_col;
@@ -103,10 +104,9 @@ int getWindowSize(int ifd, int ofd, int *rows, int *cols) {
     return -1;
 }
 
-
-void lines(int num, int row) {
+void lines(int num, int row, int col) {
 	for(int i=0; i<num; i++) {
-		cursor_move(1+row+i, 1);
+		cursor_move(1+row+i, 1+col);
 		char buf[32];
     	snprintf(buf, sizeof(buf),"line %d", i);
 		append(buf);
@@ -116,8 +116,12 @@ void lines(int num, int row) {
 void refresh() {
 	cursor_hide();
 	clear();
-	lines(10, 0);
-	lines(5, 10);
+	int rows, cols;
+	window_size(&rows, &cols);
+	cursor_move(rows/2, cols/2);
+	append("HELLO");
+	lines(10, (rows/2) + 1, (cols/2) - 1);
+	//lines(5, 10);
 	apply();
 	cursor_show();
 }
@@ -133,7 +137,9 @@ int main(int argc, char *argv[]) {
 	// 2. apply
 	// 3. wait for input
 	refresh();
+	
 	signal(SIGWINCH, handle_winch);
+	
 	while(getchar() != 27) {}
 	
 	return 0;
