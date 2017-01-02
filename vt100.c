@@ -123,26 +123,7 @@ void refresh() {
 }
 
 void handle_winch(int sig){
-
 	refresh();
-	printf("resize");
-
- 	signal(SIGWINCH, SIG_IGN);	
- 	
- 	// Reinitialize the window to update data structures.
- 	//endwin();
- 	//initscr();
- 	//refresh();
- 	//clear();	
- 	//char tmp[128];
- 	//sprintf(tmp, "%dx%d", COLS, LINES);	
- 	//// Approximate the center
- 	//int x = COLS / 2 - strlen(tmp) / 2;
- 	//int y = LINES / 2 - 1;	
- 	//mvaddstr(y, x, tmp);
- 	//refresh();	
- 	
- 	signal(SIGWINCH, handle_winch);
 }
 
 int main(int argc, char *argv[]) {
@@ -152,9 +133,7 @@ int main(int argc, char *argv[]) {
 	// 2. apply
 	// 3. wait for input
 	refresh();
-	
 	signal(SIGWINCH, handle_winch);
-	
 	while(getchar() != 27) {}
 	
 	return 0;
