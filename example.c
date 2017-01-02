@@ -18,11 +18,27 @@ void refresh() {
 	append("HELLO");
 	lines(3, (rows/2) + 1, (cols/2) - 1);
 	apply();
-	cursor_show(1);
 }
 
 void on_resize(int sig){
 	refresh();
+}
+
+void process_input(int fd) {
+	int nread;
+    char c, seq[3];
+    while ((nread = read(fd,&c,1)) == 0);
+    if (nread == -1) exit(1);
+    
+    //printf("c %d", c);
+    switch(c) {
+    	case 27: 
+    	cursor_move(0, 0);
+    	clear();
+    	apply();
+    	exit(0);
+    	break;
+    }
 }
 
 int main(int argc, char *argv[]) {
@@ -32,11 +48,10 @@ int main(int argc, char *argv[]) {
 	// 2. apply
 	// 3. wait for input
 	init(on_resize);
-	
-	refresh();
-	
-	while(getchar() != '\n') {}
-	
+	while(1) {
+		refresh();
+		process_input(STDIN_FILENO);
+	}
 	return 0;
 }
 
