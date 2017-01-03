@@ -1,24 +1,25 @@
 #include "sta.c"
+#include <unistd.h>
+#include <signal.h>
 
-void lines(int num, int row, int col) {
-	for(int i=0; i<num; i++) {
-		move(1+row+i, 1+col);
-		char buf[32];
-    	snprintf(buf, sizeof(buf),"line %d", i);
-		append(buf);
-	}
-}
+volatile int num_lines = 1;
 
 void draw() {
 	cursor(0);
+	apply();
 	clear();
 	int rows, cols;
 	get_window_size(&rows, &cols);
-	move(rows/2, cols/2 - 1);
-	append("STA");
-	move(rows/2 + 2, cols/2 - 8);
+	move(rows/2-1, cols/2 - 1);
+	append("sta");
+	move(rows/2 + 1, cols/2 - 8);
 	append("Press 'q' to quit");
-	//lines(3, (rows/2) + 4, (cols/2) - 3);
+	for(int i=0; i<num_lines; i++) {
+		move(rows/2 + 3 + i, cols/2 - 8);
+		char buf[32];
+	 	snprintf(buf, sizeof(buf),"line %d", i);
+	 	append(buf);
+	}
 	apply();
 }
 
@@ -41,9 +42,16 @@ void input(int fd) {
     }
 }
 
-int main(int argc, char *argv[]) {
+void handle(int sig) {
+    num_lines++;
+    alarm(1);
+    draw();
+}
 
+int main(int argc, char *argv[]) {
 	init(on_resize);
+	signal(SIGALRM, handle);
+	alarm(1);
 	while(1) {
 		draw();
 		input(STDIN_FILENO);
