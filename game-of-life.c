@@ -28,15 +28,12 @@ void init_grid() {
 int live_neighbours(int row, int col, int grid[][MAX_COLS]) {
 	int sum = 0;
 	for(int i=0; i<8; i++) {
-	
 		int x = col + neighbours[i][0];
 		if(x < 0 || x >= MAX_COLS)
 			continue;
-			
 		int y = row + neighbours[i][1];
 		if(y < 0 || y >= MAX_ROWS)
 			continue;
-			
 		sum += grid[y][x];
 	}
 	return sum;
@@ -73,16 +70,16 @@ void draw() {
 			if(curr[row][col]) 
 				append("#");
 		}
-	const char * gameOfLife = "Game of life";
+		
 	const char * pressEscapeToQuit = "Press 'q' to quit";
-	move(1, cols/2 - strlen(gameOfLife) / 2);
-	append(gameOfLife);
-	move(2, cols/2 - strlen(gameOfLife) / 2);
+	move(rows, cols - strlen(pressEscapeToQuit));
 	append(pressEscapeToQuit);
+	
 	move(rows, 1);
 	char buf[32];
 	snprintf(buf, sizeof(buf), "rows %d cols %d", rows, cols);
 	append(buf);
+	
 	apply();
 }
 
