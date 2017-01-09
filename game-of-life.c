@@ -25,14 +25,19 @@ void init_grid() {
 			curr[row][col] = floor(rand() / (RAND_MAX/2));
 }
 
-int live_neighbours(int row, int col, int a[][MAX_COLS]) {
+int live_neighbours(int row, int col, int grid[][MAX_COLS]) {
 	int sum = 0;
 	for(int i=0; i<8; i++) {
+	
 		int x = col + neighbours[i][0];
-		int y = row + neighbours[i][1];
-		if(x < 0 || x >= MAX_COLS || y < 0 || y >= MAX_ROWS)
+		if(x < 0 || x >= MAX_COLS)
 			continue;
-		sum += a[y][x];
+			
+		int y = row + neighbours[i][1];
+		if(y < 0 || y >= MAX_ROWS)
+			continue;
+			
+		sum += grid[y][x];
 	}
 	return sum;
 }
