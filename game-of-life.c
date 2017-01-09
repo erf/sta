@@ -20,11 +20,9 @@ const int neighbours[8][2] = {
 };
 
 void init_grid() {
-	for (int row=0; row<MAX_ROWS; row++) {
-		for (int col=0; col<MAX_COLS; col++) {
+	for (int row=0; row<MAX_ROWS; row++)
+		for (int col=0; col<MAX_COLS; col++)
 			curr[row][col] = floor(rand() / (RAND_MAX/2));
-		}
-	}
 }
 
 int live_neighbours(int row, int col, int a[][MAX_COLS]) {
@@ -53,11 +51,10 @@ void update() {
 		for (int col=0; col<MAX_COLS; col++) {
 			int n = live_neighbours(row, col, curr);
 			int v = curr[row][col];
-			if(v == 1 && (n == 2 || n == 3)) {
+			if(v == 1 && (n == 2 || n == 3))
 				next[row][col] = 1;
-			} else if(n == 3) {
+			else if(n == 3) 
 				next[row][col] = 1;
-			}
 		}
 	}
 	
@@ -70,14 +67,13 @@ void draw() {
 	for (int row=0; row<MIN(rows, MAX_ROWS); row++) {
 		for (int col=0; col<MIN(cols, MAX_COLS); col++) {
 			move(row + 1, col + 1);
-			int v = curr[row][col];
-			if(v) {
+			if(curr[row][col]) {
 				append("#");
 			}
 		}
 	}
-	char * gameOfLife = "Game of life";
-	char * pressEscapeToQuit = "Press 'q' to quit";
+	const char * gameOfLife = "Game of life";
+	const char * pressEscapeToQuit = "Press 'q' to quit";
 	move(1, cols/2 - strlen(gameOfLife) / 2);
 	append(gameOfLife);
 	move(2, cols/2 - strlen(gameOfLife) / 2);
