@@ -51,10 +51,7 @@ void update() {
 		for (int col=0; col<MAX_COLS; col++) {
 			int n = live_neighbours(row, col, curr);
 			int v = curr[row][col];
-			if(v == 1 && (n == 2 || n == 3))
-				next[row][col] = 1;
-			else if(n == 3) 
-				next[row][col] = 1;
+			next[row][col] = (v == 1 && (n == 2 || n == 3)) || (v == 0 && n == 3);
 		}
 	}
 	
