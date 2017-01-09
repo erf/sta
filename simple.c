@@ -43,7 +43,6 @@ void input(int fd) {
 
 int main(int argc, char *argv[]) {
 	init(on_resize);
-	signal(SIGALRM, handle);
 	while(1) {
 		draw();
 		input(STDIN_FILENO);
