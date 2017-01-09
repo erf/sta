@@ -47,13 +47,14 @@ void update() {
 
 	memset(next, 0, sizeof(int) * MAX_ROWS * MAX_COLS);
 
-	for (int row=0; row<MAX_ROWS; row++) {
+	for (int row=0; row<MAX_ROWS; row++)
 		for (int col=0; col<MAX_COLS; col++) {
 			int n = live_neighbours(row, col, curr);
 			int v = curr[row][col];
-			next[row][col] = (v == 1 && (n == 2 || n == 3)) || (v == 0 && n == 3);
+			next[row][col] = 
+				(v == 1 && (n == 2 || n == 3)) || 
+				(v == 0 && n == 3);
 		}
-	}
 	
 	memcpy(curr, next, sizeof(next));
 }
@@ -61,14 +62,12 @@ void update() {
 void draw() {
 	cursor(0);
 	clear();
-	for (int row=0; row<MIN(rows, MAX_ROWS); row++) {
+	for (int row=0; row<MIN(rows, MAX_ROWS); row++)
 		for (int col=0; col<MIN(cols, MAX_COLS); col++) {
 			move(row + 1, col + 1);
-			if(curr[row][col]) {
+			if(curr[row][col]) 
 				append("#");
-			}
 		}
-	}
 	const char * gameOfLife = "Game of life";
 	const char * pressEscapeToQuit = "Press 'q' to quit";
 	move(1, cols/2 - strlen(gameOfLife) / 2);
