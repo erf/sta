@@ -34,7 +34,7 @@ int live_neighbours(int row, int col, int a[][MAX_COLS]) {
 		int y = row + neighbours[i][1];
 		if(x < 0 || x >= MAX_COLS || y < 0 || y >= MAX_ROWS)
 			continue;
-		sum += a[y][x] == 1 ? 1 : 0;
+		sum += a[y][x];
 	}
 	return sum;
 }
