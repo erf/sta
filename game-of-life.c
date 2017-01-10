@@ -92,33 +92,33 @@ void on_resize(int sig){
 
 void input(int fd) {
 	int nread;
-    char c;
-    while ((nread = read(fd,&c,1)) == 0);
-    if (nread == -1) exit(1);
-    switch(c) {
-    	case 'q': 
-    	move(1, 1);
-    	clear();
-    	apply();
-    	exit(0);
-    	break;
-    }
+	char c;
+	while ((nread = read(fd,&c,1)) == 0);
+	if (nread == -1) exit(1);
+	switch(c) {
+		case 'q': 
+			move(1, 1);
+			clear();
+			apply();
+			exit(0);
+		break;
+	}
 }
 
 void alert(unsigned int ms)
 {
-  struct itimerval old, new;
-  new.it_interval.tv_sec = 0;
-  new.it_interval.tv_usec = 0;
-  new.it_value.tv_sec = 0;
-  new.it_value.tv_usec = ms;
-  setitimer(ITIMER_REAL, &new, NULL);
+	struct itimerval old, new;
+	new.it_interval.tv_sec = 0;
+	new.it_interval.tv_usec = 0;
+	new.it_value.tv_sec = 0;
+	new.it_value.tv_usec = ms;
+	setitimer(ITIMER_REAL, &new, NULL);
 }
 
 void on_alarm(int sig) {
-    draw();
-    update();
-    alert(200*1000);
+	draw();
+	update();
+	alert(200*1000);
 }
 
 int main(int argc, char *argv[]) {
