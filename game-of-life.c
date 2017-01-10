@@ -2,6 +2,7 @@
 #include <signal.h>
 #include <math.h>
 #include <time.h>
+#include <sys/time.h>
 
 #include "sta.c"
 
@@ -104,10 +105,20 @@ void input(int fd) {
     }
 }
 
+void alert(unsigned int ms)
+{
+  struct itimerval old, new;
+  new.it_interval.tv_sec = 0;
+  new.it_interval.tv_usec = 0;
+  new.it_value.tv_sec = 0;
+  new.it_value.tv_usec = ms;
+  setitimer(ITIMER_REAL, &new, NULL);
+}
+
 void on_alarm(int sig) {
-    alarm(1);
-    update();
     draw();
+    update();
+    alert(200*1000);
 }
 
 int main(int argc, char *argv[]) {
@@ -116,9 +127,8 @@ int main(int argc, char *argv[]) {
 	init_grid();
 	get_window_size(&rows, &cols);
 	signal(SIGALRM, on_alarm);
-	alarm(1);
+	alert(200*1000);
 	while(1) {
-		draw();
 		input(STDIN_FILENO);
 	}
 	return 0;
