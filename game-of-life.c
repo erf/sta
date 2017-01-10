@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <math.h>
+#include <time.h>
 
 #include "sta.c"
 
@@ -110,6 +111,7 @@ void on_alarm(int sig) {
 }
 
 int main(int argc, char *argv[]) {
+	srand(time(NULL));
 	init(on_resize);
 	init_grid();
 	get_window_size(&rows, &cols);
