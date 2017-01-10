@@ -10,8 +10,8 @@ int rows, cols;
 
 const int MAX_ROWS = 64;
 const int MAX_COLS = 256;
-int curr [MAX_ROWS][MAX_COLS] = {{ 0 }};
-int next [MAX_ROWS][MAX_COLS] = {{ 0 }};
+int curr [MAX_ROWS][MAX_COLS];
+int next [MAX_ROWS][MAX_COLS];
 
 const int neighbours[8][2] = {
 	{ -1, -1 }, {  0, -1 }, {  1, -1 },
