@@ -8,8 +8,8 @@
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
+int done = 0;
 int rows, cols;
-
 const int MAX_ROWS = 64;
 const int MAX_COLS = 256;
 int curr [MAX_ROWS][MAX_COLS];
@@ -100,6 +100,7 @@ void input(int fd) {
 	if (nread == -1) exit(1);
 	switch(c) {
 		case 'q': 
+			done = 1;
 			move(1, 1);
 			color_reset();
 			clear();
@@ -111,6 +112,7 @@ void input(int fd) {
 
 void alert(unsigned int ms)
 {
+	if(done) return;
 	struct itimerval t;
 	t.it_interval.tv_sec = 0;
 	t.it_interval.tv_usec = 0;
