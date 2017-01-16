@@ -7,13 +7,13 @@
 #include "sta.c"
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
-
-int done = 0;
-int rows, cols;
 #define MAX_ROWS 64
 #define MAX_COLS 256
+
+int rows, cols;
 int curr [MAX_ROWS][MAX_COLS];
 int next [MAX_ROWS][MAX_COLS];
+int done = 0;
 
 const int neighbours[8][2] = {
 	{ -1, -1 }, {  0, -1 }, {  1, -1 },
@@ -112,19 +112,19 @@ void input(int fd) {
 
 void alert(unsigned int ms)
 {
-	if(done) return;
 	struct itimerval t;
 	t.it_interval.tv_sec = 0;
 	t.it_interval.tv_usec = 0;
 	t.it_value.tv_sec = 0;
-	t.it_value.tv_usec = ms;
+	t.it_value.tv_usec = ms * 1000;
 	setitimer(ITIMER_REAL, &t, NULL);
 }
 
 void on_alarm(int sig) {
 	draw();
 	update();
-	alert(200*1000);
+	if(!done) 
+		alert(200);
 }
 
 int main(int argc, char *argv[]) {
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
 	init_grid();
 	get_window_size(&rows, &cols);
 	signal(SIGALRM, on_alarm);
-	alert(200*1000);
+	alert(200);
 	while(1) {
 		input(STDIN_FILENO);
 	}
