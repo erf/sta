@@ -7,7 +7,8 @@
  * LINKS
  * https://github.com/antirez/kilo
  * http://www.termsys.demon.co.uk/vtansi.htm 
- * 
+ * http://misc.flogisoft.com/bash/tip_colors_and_formatting
+ * https://gist.github.com/XVilka/8346728
  */
  
 typedef void (*resize_handler)(int);
