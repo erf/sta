@@ -10,8 +10,8 @@
 
 int done = 0;
 int rows, cols;
-const int MAX_ROWS = 64;
-const int MAX_COLS = 256;
+#define MAX_ROWS 64
+#define MAX_COLS 256
 int curr [MAX_ROWS][MAX_COLS];
 int next [MAX_ROWS][MAX_COLS];
 
