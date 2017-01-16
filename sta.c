@@ -118,6 +118,22 @@ void clear_line() {
 	append("\x1b[K");
 }
 
+void color_fg(int col) {
+	char buf[32];
+    snprintf(buf, sizeof(buf),"\x1b[38;5;%dm", col);
+	append(buf);
+}
+
+void color_bg(int col) {
+	char buf[32];
+    snprintf(buf, sizeof(buf),"\x1b[48;5;%dm", col);
+	append(buf);
+}
+
+void color_reset() {
+	append("\x1b[0m");
+}
+
 /* TODO support multiple terminals */
 /*
 typedef struct {

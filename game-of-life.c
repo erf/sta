@@ -65,6 +65,8 @@ void update() {
 
 void draw() {
 	cursor(0);
+	color_bg(236);
+	color_fg(196);
 	clear();
 	for (int row=0; row<MIN(rows, MAX_ROWS); row++)
 		for (int col=0; col<MIN(cols, MAX_COLS); col++) {
@@ -73,6 +75,7 @@ void draw() {
 				append("#");
 		}
 		
+	color_fg(226);
 	const char * pressEscapeToQuit = "Press 'q' to quit";
 	move(rows, cols - strlen(pressEscapeToQuit));
 	append(pressEscapeToQuit);
@@ -98,6 +101,7 @@ void input(int fd) {
 	switch(c) {
 		case 'q': 
 			move(1, 1);
+			color_reset();
 			clear();
 			apply();
 			exit(0);
@@ -107,12 +111,12 @@ void input(int fd) {
 
 void alert(unsigned int ms)
 {
-	struct itimerval old, new;
-	new.it_interval.tv_sec = 0;
-	new.it_interval.tv_usec = 0;
-	new.it_value.tv_sec = 0;
-	new.it_value.tv_usec = ms;
-	setitimer(ITIMER_REAL, &new, NULL);
+	struct itimerval t;
+	t.it_interval.tv_sec = 0;
+	t.it_interval.tv_usec = 0;
+	t.it_value.tv_sec = 0;
+	t.it_value.tv_usec = ms;
+	setitimer(ITIMER_REAL, &t, NULL);
 }
 
 void on_alarm(int sig) {

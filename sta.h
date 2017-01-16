@@ -36,3 +36,9 @@ void clear();
 /* clear line right of cursor. */
 void clear_line();
 
+void color_fg(int col);
+
+void color_bg(int col);
+
+void color_reset();
+
