@@ -1,11 +1,9 @@
 sta
 ===
 
-A simple VT100 terminal abstraction API.
+A simple terminal abstraction API.
 
-Check out the [Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) demo.
-
-![Game of Life](game-of-life.png)
+I made 'Game of Life' and 'Snake' using the API.
 
 This is just an experiment for learning and probably not usable for anything else.
 
