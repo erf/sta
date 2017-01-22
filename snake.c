@@ -7,8 +7,8 @@
 #include "sta.c"
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
-#define MAX_ROWS 16
-#define MAX_COLS 32
+#define MAX_ROWS 9
+#define MAX_COLS 24
 #define MAX_SNAKE MAX_ROWS*MAX_COLS
 #define UPDATE_TIME 150
 
@@ -28,10 +28,42 @@ int r(int min, int max) {
 	return num;
 }
 
-Pos r2() {
+Pos r_inside() {
 	int x = r(1, MAX_COLS-1);
 	int y = r(1, MAX_ROWS-1);
 	return (Pos) { .x = x, .y = y };
+}
+
+Pos add(Pos p1, Pos p2) {
+	return (Pos) { 
+		.x = p1.x + p2.x, 
+		.y = p1.y + p2.y 
+	};
+}
+
+int is_zero(Pos p) {
+	return p.x == 0 && p.y == 0;
+}
+
+int is_same(Pos p1, Pos p2) {
+	return (p1.x == p2.x && p1.y == p2.y);
+}
+
+Pos create_food() {
+	Pos p;
+	while(1) {
+		int food_collide = 0;
+		p = r_inside();
+		for(int i=0; i<snake_len; i++) {
+			if(is_same(snake[i], p)) {
+				food_collide = 1;
+				break;
+			}
+		}
+		if(!food_collide)
+			break;
+	}
+	return p;
 }
 
 void init_game() {
@@ -42,7 +74,7 @@ void init_game() {
 	dir = (Pos) { .x = 1, .y = 0 };
 	
 	// init food
-	food = r2();
+	food = create_food();
 	
 }
 
@@ -63,13 +95,27 @@ void update() {
 		game_over = 1;
 	}
 	
-	// TODO check if snake hit itself
+	// check if snake hit itself
+	for(int i=0; i<snake_len-1; i++) {
+		Pos p = snake[i];
+		for(int j=i+1; j<snake_len; j++) {
+			Pos p1 = snake[j];
+			if(p.x == p1.x && p.y == p1.y) {
+				game_over = 1;
+				return;
+			}
+		}
+	}
 	
 	// check if food was eaten and create new food
-	if(p.x == food.x && p.y == food.y) {
+	if(is_same(p, food)) {
+	
+		// more snake
 		++snake_len;
 		snake[snake_len-1] = snake[snake_len-2];
-		food = r2();
+		
+		// create until food is not on snake
+		food = create_food();
 	}
 	
 }
@@ -110,16 +156,21 @@ void draw() {
 		const char * gameOver = "Game Over";
 		move(rows/2, (cols/2) - (strlen(gameOver)/2));
 		append(gameOver);
-		
-		const char * restart = "Press 'r' to restart or 'q' to quit.";
-		move(rows, (cols / 2) - strlen(restart) / 2);
-		append(restart);
-	} else {
-		color_fg(226);
-		const char * pressEscapeToQuit = "Press 'q' to quit";
-		move(rows, (cols / 2) - strlen(pressEscapeToQuit) / 2);
-		append(pressEscapeToQuit);
-	}
+	} 
+	
+	color_fg(226);
+	const char * howto_move    = "'hjkl' - move";
+	const char * howto_quit    = "'q'    - quit";
+	const char * howto_restart = "'r'    - restart";
+	
+	move(rows-2, 1);
+	append(howto_move);
+	
+	move(rows-1, 1);
+	append(howto_quit);
+	
+	move(rows-0, 1);
+	append(howto_restart);
 	
 	apply();
 }
@@ -147,24 +198,55 @@ void input(int fd) {
 	switch(c) {
 	
 		case 'q': 
+		{
 			quit = 1;
 			move(1, 1);
 			color_reset();
 			clear();
 			apply();
 			exit(0);
-		break;
+			break;
+		}
 		
 		case 'r':
+		{
 			init_game();
 			game_over = 0;
 			alert(1);
-		break;
+			break;
+		}
 		
-		case 'h': dir = (Pos) { .x = -1, .y = 0 };  break;
-		case 'j': dir = (Pos) { .x = 0,  .y = 1 };  break;
-		case 'k': dir = (Pos) { .x = 0,  .y = -1 }; break;
-		case 'l': dir = (Pos) { .x = 1,  .y = 0 };  break;
+		case 'h': 
+		{
+			Pos d = { .x = -1, .y = 0 };
+			if(!is_zero(add(dir, d))) 
+				dir = d;
+			break;
+		}
+			
+		case 'j': 
+		{
+			Pos d = { .x = 0,  .y = 1 };  
+			if(!is_zero(add(dir, d))) 
+				dir = d;
+			break;
+		}
+			
+		case 'k': 
+		{
+			Pos d = { .x = 0,  .y = -1 }; 
+			if(!is_zero(add(dir, d))) 
+				dir = d;
+			break;
+		}
+		
+		case 'l': 
+		{
+			Pos d = { .x = 1,  .y = 0 };
+			if(!is_zero(add(dir, d))) 
+				dir = d;
+			break;
+		}
 		
 	}
 }
