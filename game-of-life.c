@@ -65,8 +65,8 @@ void update() {
 
 void draw() {
 	cursor(0);
-	color_bg(236);
-	color_fg(196);
+	color_bg(0);
+	color_fg(228);
 	clear();
 	for (int row=0; row<MIN(rows, MAX_ROWS); row++)
 		for (int col=0; col<MIN(cols, MAX_COLS); col++) {
@@ -75,7 +75,7 @@ void draw() {
 				append("#");
 		}
 		
-	color_fg(226);
+	color_fg(196);
 	const char * pressEscapeToQuit = "Press 'q' to quit";
 	move(rows, cols - strlen(pressEscapeToQuit));
 	append(pressEscapeToQuit);
@@ -123,8 +123,9 @@ void alert(unsigned int ms)
 void on_alarm(int sig) {
 	draw();
 	update();
-	if(!done) 
-		alert(200);
+	if(done) 
+		return;
+	alert(200);
 }
 
 int main(int argc, char *argv[]) {
@@ -133,7 +134,7 @@ int main(int argc, char *argv[]) {
 	init_grid();
 	get_window_size(&rows, &cols);
 	signal(SIGALRM, on_alarm);
-	alert(200);
+	alert(1);
 	while(1) {
 		input(STDIN_FILENO);
 	}
