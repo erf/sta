@@ -3,7 +3,7 @@ sta
 
 A simple terminal abstraction API.
 
-Demos
+Demos:
 	- Game of Life
 	- Snake
 
