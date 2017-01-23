@@ -21,6 +21,7 @@ Pos food;
 Pos dir;
 int quit = 0;
 int game_over = 0;
+int paused = 0;
 
 int r(int min, int max) {
 	double one = (double) rand() / (double) RAND_MAX;
@@ -159,18 +160,18 @@ void draw() {
 	} 
 	
 	color_fg(226);
-	const char * howto_move    = "'hjkl' - move";
-	const char * howto_quit    = "'q'    - quit";
-	const char * howto_restart = "'r'    - restart";
 	
-	move(rows-2, 1);
-	append(howto_move);
+	const char * instructions [] = {
+		"'hjkl' - move",
+		"'p'    - pause",
+		"'r'    - restart",
+		"'q'    - quit"
+	};
 	
-	move(rows-1, 1);
-	append(howto_quit);
-	
-	move(rows-0, 1);
-	append(howto_restart);
+	for(int i=0; i<4; i++) {
+		move(rows-4+i, 1);
+		append(instructions[i]);
+	}
 	
 	apply();
 }
@@ -205,6 +206,15 @@ void input(int fd) {
 			clear();
 			apply();
 			exit(0);
+			break;
+		}
+		
+		case 'p':
+		{
+			if(game_over) 
+				return;
+			paused = !paused;
+			alert(1);
 			break;
 		}
 		
@@ -254,7 +264,7 @@ void input(int fd) {
 void on_alarm(int sig) {
 	update();
 	draw();
-	if(quit || game_over)
+	if(quit || game_over || paused)
 		return;
 	alert(UPDATE_TIME);
 }
