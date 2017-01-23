@@ -142,7 +142,7 @@ void draw() {
 	// draw food
 	color_fg(9);
 	move(food.y + 1, food.x + 1);
-	append("&");
+	append("o");
 	
 	// draw snake
 	color_fg(11);
