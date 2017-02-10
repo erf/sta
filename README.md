@@ -4,10 +4,10 @@ sta
 A simple terminal abstraction API.
 
 Demos:
-* snake
-* game of life
-* colors
-* simple
+* Snake
+* Game of Life
+* Colors
+* Simple
 
 
 This is just an experiment for learning and probably not usable for anything else.
