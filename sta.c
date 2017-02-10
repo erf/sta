@@ -16,54 +16,27 @@ typedef struct {
 } Buffer;
 
 static Buffer buffer = { NULL, 0 };
-static int rawmode = 0;
-static struct termios orig_termios; /* In order to restore at exit.*/
+static struct termios orig_termios;
 
 void disable_raw_mode(int fd) {
-    /* Don't even check the return value as it's too late. */
-    if (rawmode) {
-        tcsetattr(fd,TCSAFLUSH,&orig_termios);
-        rawmode = 0;
-    }
+	tcsetattr(fd,TCSAFLUSH,&orig_termios);
 }
 
-/* Called at exit to avoid remaining in raw mode. */
 void editor_at_exit(void) {
     disable_raw_mode(STDIN_FILENO);
 }
 
-/* Raw mode: 1960 magic shit. */
-int enable_raw_mode(int fd) {
-    struct termios raw;
-
-    if (rawmode) return 0; /* Already enabled. */
-    if (!isatty(STDIN_FILENO)) goto fatal;
+void enable_raw_mode(int fd) {
     atexit(editor_at_exit);
-    if (tcgetattr(fd,&orig_termios) == -1) goto fatal;
-
-    raw = orig_termios;  /* modify the original mode */
-    /* input modes: no break, no CR to NL, no parity check, no strip char,
-     * no start/stop output control. */
+    tcgetattr(fd, &orig_termios);
+    struct termios raw = orig_termios;
     raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-    /* output modes - disable post processing */
     raw.c_oflag &= ~(OPOST);
-    /* control modes - set 8 bit chars */
     raw.c_cflag |= (CS8);
-    /* local modes - choing off, canonical off, no extended functions,
-     * no signal chars (^Z,^C) */
     raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-    /* control chars - set return condition: min number of bytes and timer. */
-    raw.c_cc[VMIN] = 0; /* Return each byte, or zero for timeout. */
-    raw.c_cc[VTIME] = 1; /* 100 ms timeout (unit is tens of second). */
-
-    /* put terminal in raw mode after flushing */
-    if (tcsetattr(fd,TCSAFLUSH,&raw) < 0) goto fatal;
-    rawmode = 1;
-    return 0;
-
-fatal:
-    errno = ENOTTY;
-    return -1;
+    raw.c_cc[VMIN] = 0;
+    raw.c_cc[VTIME] = 1;
+    tcsetattr(fd, TCSAFLUSH, &raw);
 }
 
 void init(resize_handler handler) {
@@ -111,11 +84,8 @@ void cursor(int visible) {
 }
 
 void clear() {
-	append("\x1b[2J");
-}
-
-void clear_line() {
-	append("\x1b[K");
+	append("\x1b[H"); // Go home
+	append("\x1b[J"); // erase down
 }
 
 void color_fg(int col) {
@@ -134,19 +104,3 @@ void color_reset() {
 	append("\x1b[0m");
 }
 
-/* TODO support multiple terminals */
-/*
-typedef struct {
-	void (*clear) ();
-} Terminal;
-
-enum {
-	TERM_VT100
-};
-
-static const Terminal terminals [] = {
-	[TERM_VT100] = {
-		clear,
-	}
-};
-*/

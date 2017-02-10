@@ -13,33 +13,33 @@
  
 typedef void (*resize_handler)(int);
 
-/* init given an resize handler. */
+/* init given resize handler */
 void init(resize_handler);
 
-/* append string to buffer. */
+/* append to buffer */
 void append(const char *str);
 
-/* write command buffer to STDOUT and reset buffer. */
+/* write buffer to STDOUT and reset */
 void apply();
 
-/* try to get the number of columns in the current terminal. */
+/* get window rows and cols */
 int get_window_size(int *rows, int *cols);
 
-/* sets cursor position where subsequent text will begin. */
+/* sets cursor position */
 void move(int row, int col);
 
 /* set cursor visibility */
 void cursor(int visible);
 
-/* clear the screen and moves the cursor home. */
+/* move home and clear down */
 void clear();
 
-/* clear line right of cursor. */
-void clear_line();
-
+/* set foreground color */
 void color_fg(int col);
 
+/* set background color */
 void color_bg(int col);
 
+/* resset color */
 void color_reset();
 
