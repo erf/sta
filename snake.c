@@ -170,7 +170,7 @@ void draw() {
 	};
 	
 	for(int i=0; i<4; i++) {
-		move(rows-3+i, 1);
+		move(MAX_ROWS + 2 + i, 1);
 		append(instructions[i]);
 	}
 	
