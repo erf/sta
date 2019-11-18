@@ -11,7 +11,6 @@
 #include "sta.h"
 
 #define MAX 1024*1024
-
 int len = 0;
 char buffer [MAX];
 
@@ -40,7 +39,7 @@ void enable_raw_mode() {
 
 void append(const char *str) {
 	size_t str_len = strlen(str);
-    memcpy(buffer+len, str, str_len + 1);
+    memcpy(buffer+len, str, str_len);
     len += str_len;
 }
 
