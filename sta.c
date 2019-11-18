@@ -45,7 +45,7 @@ void append(const char *str) {
 
 void append_char(const char c) {
     buffer[len] = c;
-    len += 1;
+    ++len;
 }
 
 void apply() {
