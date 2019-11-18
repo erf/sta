@@ -1,15 +1,18 @@
 sta
 ===
 
-A simple terminal abstraction API.
+A simple terminal abstraction API for learning purposes.
 
-Demos:
+## Demos
 * Snake
 * Game of Life
 * Colors
 * Simple
 
+## Build
+gcc life.c -o life
 
-This is just an experiment for learning and probably not usable for anything else.
+## Run
+./life
 
-Thanks to [kilo](https://github.com/antirez/kilo).
+Based on [kilo](https://github.com/antirez/kilo).
