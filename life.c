@@ -72,12 +72,12 @@ void draw() {
 	clear();
 	for (int row=0; row<MIN(rows, MAX_ROWS); row++) {
 		for (int col=0; col<MIN(cols, MAX_COLS); col++) {
+			move(row + 1, col + 1);
 			if(curr[row][col])
 			 	append("#");
 			else
 				append(" ");
 		}
-		append("\n");
 	}
 		
 	color_fg(196);
