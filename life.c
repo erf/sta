@@ -72,11 +72,10 @@ void draw() {
 	clear();
 	for (int row=0; row<MIN(rows, MAX_ROWS); row++) {
 		for (int col=0; col<MIN(cols, MAX_COLS); col++) {
-			//move(row + 1, col + 1);
 			if(curr[row][col])
-			 	append("#");
+			 	append_char('#');
 			else
-				append(" ");
+				append_char(' ');
 		}
 		append("\r\n");
 	}

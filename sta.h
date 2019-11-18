@@ -20,8 +20,11 @@ void enable_raw_mode();
 /* disable raw mode */
 void disable_raw_mode();
 
-/* append to buffer */
+/* append char array to buffer */
 void append(const char *str);
+
+/* append char to buffer */
+void append_char(const char c);
 
 /* write buffer to STDOUT and reset */
 void apply();

@@ -134,23 +134,23 @@ void draw() {
 		for(int row=0; row<MAX_ROWS; row++) {
 			move(row + 1, col + 1);
 			if(row==0 || col==0 || row==MAX_ROWS-1 || col==MAX_COLS-1)
-				append("#");
+				append_char('#');
 			else 
-				append(" ");
+				append_char(' ');
 		}
 	}
 	
 	// draw food
 	color_fg(9);
 	move(food.y + 1, food.x + 1);
-	append("o");
+	append_char('o');
 	
 	// draw snake
 	color_fg(11);
 	for(int i=0; i<snake_len; i++) {
 		Pos p = snake[i];
 		move(p.y + 1, p.x + 1);
-		append("s");
+		append_char('s');
 	}
 		
 	if(game_over) {

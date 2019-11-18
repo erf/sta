@@ -43,6 +43,11 @@ void append(const char *str) {
     len += str_len;
 }
 
+void append_char(const char c) {
+    buffer[len] = c;
+    len += 1;
+}
+
 void apply() {
 	write(STDOUT_FILENO, buffer, len);
     memset(buffer, 0, MAX);
