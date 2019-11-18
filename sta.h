@@ -2,7 +2,8 @@
  * sta - simple vt100 terminal abstraction 
  *
  * - buffer common terminal escape codes for rendering
- * - window size and resize event 
+ * - window size 
+ * - window resize event 
  *
  * LINKS
  * https://github.com/antirez/kilo
