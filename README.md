@@ -3,7 +3,7 @@ sta
 
 Simple API for console applications.
 
-An experiment for learning purposes.
+Based on [kilo](https://github.com/antirez/kilo) and build for learning purposes.
 
 ## Demos
 * Snake
@@ -16,5 +16,3 @@ gcc life.c -o life
 
 ## Run
 ./life
-
-Based on [kilo](https://github.com/antirez/kilo)
