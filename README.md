@@ -1,7 +1,9 @@
 sta
 ===
 
-A simple terminal abstraction API for learning purposes.
+Simple API for console applications.
+
+An experiment for learning purposes.
 
 ## Demos
 * Snake
