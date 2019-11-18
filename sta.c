@@ -10,12 +10,11 @@
 
 #include "sta.h"
 
-typedef struct {
-    char *data;
-    int len;
-} Buffer;
+#define MAX 1024*1024
 
-static Buffer buffer = { NULL, 0 };
+int len = 0;
+char buffer [MAX];
+
 static struct termios orig_termios;
 
 void disable_raw_mode() {
@@ -40,19 +39,15 @@ void enable_raw_mode() {
 }
 
 void append(const char *str) {
-	size_t len = strlen(str);
-    char *new = realloc(buffer.data, buffer.len+len);
-    if (new == NULL) return;
-    memcpy(new+buffer.len, str, len);
-    buffer.data = new;
-    buffer.len += len;
+	size_t str_len = strlen(str);
+    memcpy(buffer+len, str, str_len + 1);
+    len += str_len;
 }
 
 void apply() {
-	write(STDOUT_FILENO, buffer.data, buffer.len);
-    memset(buffer.data, 0, buffer.len);
-    buffer.data = NULL;
-    buffer.len = 0;
+	write(STDOUT_FILENO, buffer, len);
+    memset(buffer, 0, MAX);
+    len = 0;
 }
 
 void move(int row, int col) {
