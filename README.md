@@ -15,4 +15,4 @@ gcc life.c -o life
 ## Run
 ./life
 
-Based on [kilo](https://github.com/antirez/kilo).
+Based on [kilo](https://github.com/antirez/kilo)
