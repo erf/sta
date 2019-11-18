@@ -130,14 +130,14 @@ void draw() {
 	// draw wall
 	color_fg(7);
 	color_bg(238);
-	for(int col=0; col<MAX_COLS; col++) {
-		for(int row=0; row<MAX_ROWS; row++) {
-			move(row + 1, col + 1);
+	for(int row=0; row<MAX_ROWS; row++) {
+		for(int col=0; col<MAX_COLS; col++) {
 			if(row==0 || col==0 || row==MAX_ROWS-1 || col==MAX_COLS-1)
 				append_char('#');
 			else 
 				append_char(' ');
 		}
+		append("\r\n");
 	}
 	
 	// draw food
