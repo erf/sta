@@ -9,7 +9,7 @@
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX_ROWS 64
 #define MAX_COLS 256
-#define INTERVAL 200
+#define INTERVAL 100
 
 int rows, cols;
 int curr [MAX_ROWS][MAX_COLS];

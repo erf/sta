@@ -163,10 +163,10 @@ void draw() {
 	color_fg(226);
 	
 	const char * instructions [] = {
-		"'hjkl' - move",
-		"'p'    - pause",
-		"'r'    - restart",
-		"'q'    - quit"
+		"hjkl - move",
+		"p    - pause",
+		"r    - restart",
+		"q    - quit"
 	};
 	
 	for(int i=0; i<4; i++) {
