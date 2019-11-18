@@ -9,7 +9,7 @@ void draw() {
 	cursor(0);
 	apply();
 	clear();
-	get_window_size(&rows, &cols);
+	window_size(&rows, &cols);
 	move(rows/2-1, cols/2 - 1);
 	append("sta");
 	move(rows/2 + 1, cols/2 - 8);
@@ -21,8 +21,8 @@ void draw() {
 	apply();
 }
 
-void on_resize(int sig){
-	get_window_size(&rows, &cols);
+void on_resize_handler(int sig){
+	window_size(&rows, &cols);
 	draw();
 }
 
@@ -33,6 +33,7 @@ void input(int fd) {
     if (nread == -1) exit(1);
     switch(c) {
     	case 'q': 
+    	cursor(1);
     	move(0, 0);
     	clear();
     	apply();
@@ -42,7 +43,8 @@ void input(int fd) {
 }
 
 int main(int argc, char *argv[]) {
-	init(on_resize);
+    enable_raw_mode();
+	on_resize(on_resize_handler);
 	while(1) {
 		draw();
 		input(STDIN_FILENO);

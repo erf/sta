@@ -9,11 +9,13 @@
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX_ROWS 64
 #define MAX_COLS 256
+#define INTERVAL 200
 
 int rows, cols;
 int curr [MAX_ROWS][MAX_COLS];
 int next [MAX_ROWS][MAX_COLS];
 int done = 0;
+int counter = 0;
 
 const int neighbours[8][2] = {
 	{ -1, -1 }, {  0, -1 }, {  1, -1 },
@@ -68,12 +70,15 @@ void draw() {
 	color_bg(0);
 	color_fg(228);
 	clear();
-	for (int row=0; row<MIN(rows, MAX_ROWS); row++)
+	for (int row=0; row<MIN(rows, MAX_ROWS); row++) {
 		for (int col=0; col<MIN(cols, MAX_COLS); col++) {
-			move(row + 1, col + 1);
-			if(curr[row][col]) 
-				append("#");
+			if(curr[row][col])
+			 	append("#");
+			else
+				append(" ");
 		}
+		append("\n");
+	}
 		
 	color_fg(196);
 	const char * pressEscapeToQuit = "Press 'q' to quit";
@@ -88,9 +93,29 @@ void draw() {
 	apply();
 }
 
-void on_resize(int sig){
-	get_window_size(&rows, &cols);
+void on_resize_handler(int sig){
+	window_size(&rows, &cols);
 	draw();
+}
+
+void set_timer(unsigned int interval)
+{
+	struct itimerval t;
+	t.it_interval.tv_sec = 0;
+	t.it_interval.tv_usec = interval * 1000;
+	t.it_value.tv_sec = 0;
+	t.it_value.tv_usec = interval * 1000;
+	setitimer(ITIMER_REAL, &t, NULL);
+}
+
+void quit() {
+	set_timer(0);
+	cursor(1);
+	clear();
+	color_reset();
+	apply();
+	disable_raw_mode();
+	exit(0);
 }
 
 void input(int fd) {
@@ -101,40 +126,29 @@ void input(int fd) {
 	switch(c) {
 		case 'q': 
 			done = 1;
-			move(1, 1);
-			color_reset();
-			clear();
-			apply();
-			exit(0);
 		break;
 	}
 }
 
-void alert(unsigned int ms)
-{
-	struct itimerval t;
-	t.it_interval.tv_sec = 0;
-	t.it_interval.tv_usec = 0;
-	t.it_value.tv_sec = 0;
-	t.it_value.tv_usec = ms * 1000;
-	setitimer(ITIMER_REAL, &t, NULL);
-}
-
-void on_alarm(int sig) {
+void do_loop() {
 	draw();
 	update();
+}
+
+void on_timer(int sig) {
+	do_loop();
 	if(done) 
-		return;
-	alert(200);
+		quit();
 }
 
 int main(int argc, char *argv[]) {
 	srand(time(NULL));
-	init(on_resize);
 	init_grid();
-	get_window_size(&rows, &cols);
-	signal(SIGALRM, on_alarm);
-	alert(1);
+	enable_raw_mode();
+	on_resize(on_resize_handler);
+	window_size(&rows, &cols);
+	signal(SIGALRM, on_timer);
+	set_timer(INTERVAL);
 	while(1) {
 		input(STDIN_FILENO);
 	}

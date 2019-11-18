@@ -13,8 +13,11 @@
  
 typedef void (*resize_handler)(int);
 
-/* init given resize handler */
-void init(resize_handler);
+/* enable raw mode */
+void enable_raw_mode();
+
+/* disable raw mode */
+void disable_raw_mode();
 
 /* append to buffer */
 void append(const char *str);
@@ -22,10 +25,7 @@ void append(const char *str);
 /* write buffer to STDOUT and reset */
 void apply();
 
-/* get window rows and cols */
-int get_window_size(int *rows, int *cols);
-
-/* sets cursor position */
+/* append cursor position */
 void move(int row, int col);
 
 /* set cursor visibility */
@@ -34,12 +34,18 @@ void cursor(int visible);
 /* move home and clear down */
 void clear();
 
-/* set foreground color */
+/* append foreground color */
 void color_fg(int col);
 
-/* set background color */
+/* append background color */
 void color_bg(int col);
 
-/* resset color */
+/* append reset color */
 void color_reset();
+
+/* init with a given resize handler */
+void on_resize(resize_handler);
+
+/* get window rows and cols */
+int window_size(int *rows, int *cols);
 

@@ -18,17 +18,17 @@ typedef struct {
 static Buffer buffer = { NULL, 0 };
 static struct termios orig_termios;
 
-void disable_raw_mode(int fd) {
-	tcsetattr(fd,TCSAFLUSH,&orig_termios);
+void disable_raw_mode() {
+	tcsetattr(STDIN_FILENO,TCSAFLUSH,&orig_termios);
 }
 
-void editor_at_exit(void) {
-    disable_raw_mode(STDIN_FILENO);
+void at_exit(void) {
+    disable_raw_mode();
 }
 
-void enable_raw_mode(int fd) {
-    atexit(editor_at_exit);
-    tcgetattr(fd, &orig_termios);
+void enable_raw_mode() {
+    atexit(at_exit);
+    tcgetattr(STDIN_FILENO, &orig_termios);
     struct termios raw = orig_termios;
     raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
     raw.c_oflag &= ~(OPOST);
@@ -36,22 +36,7 @@ void enable_raw_mode(int fd) {
     raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
     raw.c_cc[VMIN] = 0;
     raw.c_cc[VTIME] = 1;
-    tcsetattr(fd, TCSAFLUSH, &raw);
-}
-
-void init(resize_handler handler) {
-	signal(SIGWINCH, handler);
-	enable_raw_mode(STDIN_FILENO);
-}
-
-int get_window_size(int *rows, int *cols) {
-    struct winsize ws;
-    if (ioctl(1, TIOCGWINSZ, &ws) == 0) {
-        *cols = ws.ws_col;
-        *rows = ws.ws_row;
-        return 0;
-    }
-    return -1;
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
 void append(const char *str) {
@@ -102,5 +87,19 @@ void color_bg(int col) {
 
 void color_reset() {
 	append("\x1b[0m");
+}
+
+void on_resize(resize_handler handler) {
+	signal(SIGWINCH, handler);
+}
+
+int window_size(int *rows, int *cols) {
+    struct winsize ws;
+    if (ioctl(1, TIOCGWINSZ, &ws) == 0) {
+        *cols = ws.ws_col;
+        *rows = ws.ws_row;
+        return 0;
+    }
+    return -1;
 }
 

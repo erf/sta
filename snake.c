@@ -130,13 +130,14 @@ void draw() {
 	// draw wall
 	color_fg(7);
 	color_bg(238);
-	for(int row=0; row<MAX_ROWS; row++)
 	for(int col=0; col<MAX_COLS; col++) {
-		move(row + 1, col + 1);
-		if(row==0 || col==0 || row==MAX_ROWS-1 || col==MAX_COLS-1)
-			append("#");
-		else 
-			append(" ");
+		for(int row=0; row<MAX_ROWS; row++) {
+			move(row + 1, col + 1);
+			if(row==0 || col==0 || row==MAX_ROWS-1 || col==MAX_COLS-1)
+				append("#");
+			else 
+				append(" ");
+		}
 	}
 	
 	// draw food
@@ -176,8 +177,8 @@ void draw() {
 	apply();
 }
 
-void on_resize(int sig){
-	get_window_size(&rows, &cols);
+void on_resize_handler(int sig){
+	window_size(&rows, &cols);
 	draw();
 }
 
@@ -201,6 +202,7 @@ void input(int fd) {
 		case 'q': 
 		{
 			quit = 1;
+			cursor(1);
 			move(1, 1);
 			color_reset();
 			clear();
@@ -271,9 +273,10 @@ void on_alarm(int sig) {
 
 int main(int argc, char *argv[]) {
 	srand(time(NULL));
-	init(on_resize);
+	enable_raw_mode();
+	on_resize(on_resize_handler);
 	init_game();
-	get_window_size(&rows, &cols);
+	window_size(&rows, &cols);
 	signal(SIGALRM, on_alarm);
 	alert(1);
 	while(1) {

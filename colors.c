@@ -23,8 +23,8 @@ void draw() {
 	apply();
 }
 
-void on_resize(int sig){
-	get_window_size(&rows, &cols);
+void on_resize_handler(int sig){
+	window_size(&rows, &cols);
 	draw();
 }
 
@@ -37,6 +37,7 @@ void input(int fd) {
 	
 		case 'q': 
 		{
+			cursor(1);
 			move(1, 1);
 			color_reset();
 			clear();
@@ -48,8 +49,9 @@ void input(int fd) {
 }
 
 int main(int argc, char *argv[]) {
-	init(on_resize);
-	get_window_size(&rows, &cols);
+    enable_raw_mode();
+	on_resize(on_resize_handler);
+	window_size(&rows, &cols);
 	draw();
 	while(1) {
 		input(STDIN_FILENO);
