@@ -12,7 +12,7 @@ Based on [kilo](https://github.com/antirez/kilo) and build for learning purposes
 * Simple
 
 ## Build
-gcc life.c -o life
+gcc snake.c -o snake
 
 ## Run
-./life
+./snake
