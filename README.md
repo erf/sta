@@ -1,7 +1,7 @@
 sta
 ===
 
-Simple API for console applications.
+Simple c API for console applications.
 
 Based on [kilo](https://github.com/antirez/kilo) and build for learning purposes.
 
